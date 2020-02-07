@@ -1,0 +1,5 @@
+Level=2
+Count=20
+Velocity=150
+LifeTime=5
+Acceleration=28
