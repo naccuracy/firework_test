@@ -40,7 +40,9 @@ pushd $LIBSBUILD
     rm ../../libs/lib/*so*
 }
 [ -d $LIBPNG ] && {
-    echo "TODO: compile $LIBPNG"
+    mkdir -v ${LIBPNG}_build
+    cmake -S ${LIBPNG} -B ${LIBPNG}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1 -DSKIP_INSTALL_PROGRAMS=1 -DPNG_SHARED=0 -DPNG_TESTS=0 -DPNG_BUILD_ZLIB=1 -DZLIB_INCLUDE_DIR="../../libs/include" -DZLIB_LIBRARY="../../libs/lib/libz.a"
+    cmake --build ${LIBPNG}_build --config Release --target install
 }
 
 popd
