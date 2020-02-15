@@ -5,7 +5,7 @@ DEST="./build"
 [ -d $LIBS ] || {
     mkdir -pv $LIBS
     mkdir -pv $LIBS/include
-    mkdir -pv $LIBS/libs
+    mkdir -pv $LIBS/lib
 }
 [ -d $DEST ] || {
     mkdir -pv $DEST
@@ -17,8 +17,13 @@ DEST="./build"
 
 LIBPNG="libpng-1.6.37"
 LIBZLIB="zlib-1.2.11"
+LIBSBUILD="$DEST/libs"
+[ -d $LIBSBUILD ] || { 
+    mkdir -pv $LIBSBUILD
+}
+
 TGZ=".tar.gz"
-pushd $LIBS
+pushd $LIBSBUILD
 [ -f $LIBPNG$TGZ ] || {
     curl -O https://netcologne.dl.sourceforge.net/project/libpng/libpng16/1.6.37/$LIBPNG$TGZ
     tar -xzf $LIBPNG$TGZ
@@ -28,11 +33,14 @@ pushd $LIBS
     tar -xzf $LIBZLIB$TGZ
 }
 
+[ -d $LIBZLIB ] && {
+    mkdir -v ${LIBZLIB}_build
+    cmake -S ${LIBZLIB} -B ${LIBZLIB}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1
+    cmake --build ${LIBZLIB}_build --config Release --target install
+    rm ../../libs/lib/*so*
+}
 [ -d $LIBPNG ] && {
     echo "TODO: compile $LIBPNG"
-}
-[ -d $LIBZLIB ] && {
-    echo "TODO: compile $LIBZLIB"
 }
 
 popd
