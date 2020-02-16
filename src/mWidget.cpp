@@ -105,7 +105,7 @@ void mWidget::Init()
     cursor = new mTexture("cursor");
     textures.push_back(cursor);
     cursor->Load(dir + "cursor.png");
-    textures.push_back(new mTexture("c"));
+    textures.push_back(new mTexture("dot"));
     textures[2]->Load(dir + "dot.png");
     
     if(cursor->isValid())cout << "cursor is valid" << endl;

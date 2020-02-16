@@ -4,64 +4,70 @@
 #include <random>
 #define USE_MATH_DEFINES
 
+using namespace std;
+
 float mx=100.f;
-std::default_random_engine generator;
-std::uniform_int_distribution<int> distribution(1, (int)mx);
+default_random_engine generator;
+uniform_int_distribution<int> distribution(1, (int)mx);
 float dice()
 {
     return (float)distribution(generator) / mx;
 }
 
-//унарный предикат для удаления взорвавшихся снарядов, используется в вызове std::if_remove
+//унарный предикат для удаления взорвавшихся снарядов, используется в вызове if_remove
 bool isExploded(Fireball const &fbl);
-//унарный предикат для удаления завершившихся фейрверков, используется в вызове std::if_remove
+//унарный предикат для удаления завершившихся фейрверков, используется в вызове if_remove
 bool isEmpty(Firework const& fw);
 
 //класс Снаряд
 //конструктор по умолчанию
 Fireball::Fireball()
+: v0{0.0f,1.0f}
+, v{0.0f,1.0f}
+, p0{}
+, pos{}
+, lifeTime{5.0}
+, texPtr{nullptr}
+, tailSize{10}
+, level{1}
+, t{0.0f}
+, a{28.0f}
 {
-    //инициализация переменных значениями по умолчанию
-    v0 = FPoint(0.0f, 1.0f);
-    v = v0;
-    p0 = FPoint(0.0f, 0.0f);
-    pos= p0;
-    lifeTime = 5.0;
-    texPtr = NULL;
-    level = 1;
-    t = 0.0;
-    a = 28;
 }
 //конструктор  для инициализации переменных конкретными значениями
-Fireball::Fireball(FPoint pos0, FPoint _v0, float accel, float lTime, int lev, mTexture *tPtr)
+Fireball::Fireball(FPoint pos0, FPoint _v0, float accel, float lTime, int lev, mTexture *tPtr, int tSize)
+: v0{_v0}
+, v{_v0}
+, p0{pos0}
+, pos{pos0}
+, lifeTime{lTime}
+, texPtr{tPtr}
+, tailSize{tSize}
+, level{lev}
+, t{0.0f}
+, a{accel}
 {
-    v0 = _v0;
-    v = _v0;
-    p0 = pos0;
-    pos= p0;
-    lifeTime = lTime;
-    texPtr = tPtr;
-    level = lev;
-    t = 0.0;
-    a = accel;
+    tail = deque<FPoint>(tailSize, FPoint(-1.0f,-1.0f));
 }
 //Конструктор копирования
 Fireball::Fireball(const Fireball &f)
+:v0{f.v0}
+,v{f.v}
+,p0{pos}
+,pos{f.pos}
+,lifeTime{f.lifeTime}
+,texPtr{f.texPtr}
+,tailSize{f.tailSize}
+,level{f.level}
+,t{f.t}
+,a{f.a}
 {
-    v0 = f.v0;
-    v = f.v;
-    pos = f.pos;
-    p0=pos;
-    lifeTime = f.lifeTime;
-    texPtr = f.texPtr;
-    level = f.level;
-    t = f.t;
-    a = f.a;
+    tail.assign(begin(f.tail), end(f.tail));
 }
 //деструктор
 Fireball::~Fireball()
 {
-    texPtr = NULL;//удаляем ссылку на партикловый эффект (шлейф)
+    texPtr = nullptr;//удаляем ссылку на партикловый эффект (шлейф)
 }
 //расчет траектории снаряда, если заряд взорван, то возвращает 0
 int Fireball::Update(float dt)
@@ -76,13 +82,8 @@ int Fireball::Update(float dt)
         //рассчитываем траекторию по уравнениям равноускоренного движения в векторной форме
         v = v + g*dt;//скорость изменяется линейно
         pos = pos + v*dt + g*dt*dt/2.0;//координаты по параболе
-
-        /*if(effPtr)//если есть партикловый эффект
-        {
-            //задаем ему новую позицию
-            effPtr->posX = pos.x;
-            effPtr->posY = pos.y;
-        }*/
+        tail.pop_back();
+        tail.push_front(pos);
     }
     if(t >= lifeTime)return 0;//снаряд взорвался(время истекло)
     else return 1;//снаряд продолжает полет
@@ -91,6 +92,9 @@ int Fireball::Update(float dt)
 void Fireball::Draw()
 {
     texPtr->Draw(pos.x, pos.y);
+    for(const auto& p: tail){
+        if(p.x!=-1.0)texPtr->Draw(p.x, p.y);
+    }
 }
 //класс фейрверк
 //конструктор по умолчанию
@@ -181,7 +185,7 @@ int Firework::Update(float dt)
         }
     }
     //удаление взорвавшихся снарядов
-    fireballs.erase(std::remove_if(std::begin(fireballs), std::end(fireballs), &isExploded),std::end(fireballs));
+    fireballs.erase(remove_if(begin(fireballs), end(fireballs), &isExploded),end(fireballs));
     //возвращаем количество живых снарядов
     return (int)fireballs.size();
 }
@@ -212,7 +216,7 @@ int Piro::Update(float dt)
     for(unsigned int i=0; i< fireworks.size();i++)//иначе обновим все фейрверки
         fireworks[i].Update(dt);
     //удаляем закончившиеся фейрверки
-    fireworks.erase(std::remove_if(std::begin(fireworks), std::end(fireworks), &isEmpty),    std::end(fireworks));
+    fireworks.erase(remove_if(begin(fireworks), end(fireworks), &isEmpty),end(fireworks));
     return (int)fireworks.size();//возвращаем количество активных фейрверков
 }
 void Piro::Draw(){

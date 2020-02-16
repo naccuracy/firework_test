@@ -3,6 +3,7 @@
 #include "fpoint.h"
 #include "mTexture.h"
 #include <vector>
+#include <deque>
 //Класс Fireball - расчет полета заряда
 class Fireball
 {
@@ -10,7 +11,7 @@ public:
     //конструктор по умолчанию
     Fireball();
     //конструктор для инициализации
-    Fireball(FPoint pos0, FPoint v0, float accel, float lTime, int lev, mTexture *tPtr);
+    Fireball(FPoint pos0, FPoint v0, float accel, float lTime, int lev, mTexture *tPtr, int tSize = 10);
     //конструктор копирования
     Fireball(const Fireball &f);
     ~Fireball();
@@ -23,6 +24,8 @@ public:
     FPoint pos;            //координаты
     float lifeTime;        //время жизни снаряда
     mTexture *texPtr;   //указатель на партикловый эффект(системы частиц)
+    std::deque<FPoint> tail;
+    int tailSize;
     int level;            //уровень снаряда
     float t;            //счетчик, содержит "возраст" снаряда
     float a;            //ускорение свободного падения

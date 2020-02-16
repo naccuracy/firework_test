@@ -134,7 +134,7 @@ void mTexture::Load(std::string file){
 
     // glTexImage2d requires rows to be 4-byte aligned
     rowbytes += 3 - ((rowbytes-1) % 4);
-    
+
     // Allocate the image_data as a big block, to be given to opengl
     png_byte * image_data;
     image_data = new png_byte[rowbytes * temp_height * sizeof(png_byte)];
@@ -166,8 +166,7 @@ void mTexture::Load(std::string file){
 
     // read the png into image_data through row_pointers
     png_read_image(png_ptr, row_pointers);
-    
-    
+
     // Generate the OpenGL texture object
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     glGenTextures(1, &id);
@@ -216,8 +215,7 @@ mTexture::mTexture(const mTexture& mTex)//имя OpenGL текстуры не к
 }
 
 mTexture& mTexture::operator=(const mTexture& mTex){
-    if(id==mTex.id)
-    {
+    if(id==mTex.id){
         return *this;
     }
     name = mTex.name;
