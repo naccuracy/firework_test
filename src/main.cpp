@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <chrono>
 
 #include <GL/glx.h>    /* this includes the necessary X headers */
 #include <GL/gl.h>
@@ -17,8 +18,9 @@
 #include "mWidget.h"
 
 using namespace std;
-int N = 0;
-double tmm = 0, dlt = 0;
+int frames = 0;
+double all_time = 0;
+chrono::duration<double> delta_time;
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
 Display   *dpy;
@@ -101,22 +103,18 @@ int main(int argc, char **argv)
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-  fatalError( "Press left mouse button to rotate around X axis" );
-  fatalError( "Press middle mouse button to rotate around Y axis" );
-  fatalError( "Press right mouse button to rotate around Z axis" );
-  fatalError( "Press ESC to quit the application" );
   
   //create widget
-  mainWindow = new mWidget("skgjb");
+  mainWindow = new mWidget("firework");
   mainWindow->width = 1024;
   mainWindow->height = 768;
   /*** (9) dispatch X events ***/
   bool running = true;
-  clock_t t1 = clock();
-  clock_t t = clock(); 
+  auto start_time = chrono::system_clock::now();
+  auto end_time = chrono::system_clock::now();
   while (running)
   {
-	  t1 = clock();
+    end_time = chrono::system_clock::now();
     while(XPending(dpy)) /* loop to compress events */
     {
       XNextEvent(dpy, &event);
@@ -140,14 +138,14 @@ int main(int argc, char **argv)
           {
             case 1: mainWindow->MouseDown(event.xbutton.x, event.xbutton.y);
               break;
-            case 2: //yAngle += 10.0;
+            case 2: //right button
               break;
-            case 3: //zAngle += 10.0;
+            case 3: //middle button
               break;
           }
           break;
         case MotionNotify:
-		  mainWindow->MouseMove(event.xmotion.x, event.xmotion.y);
+          mainWindow->MouseMove(event.xmotion.x, event.xmotion.y);
           break;
         case ConfigureNotify:
           glViewport(0, 0, event.xconfigure.width,
@@ -156,22 +154,23 @@ int main(int argc, char **argv)
           case Expose:
           break;
         case DestroyNotify:
-		  cout << "DestroyNotify!" << endl;
+          cout << "DestroyNotify!" << endl;
           running = false;
           break;
       }
       XFlush(dpy);
     } 
     
-    ++N;
-    dlt = ((double)(t1)/CLOCKS_PER_SEC-(double)(t)/CLOCKS_PER_SEC)*100.f;
-    tmm += dlt;
-    cout << "dt = " << dlt  << ' ' << tmm << endl;
-    mainWindow->Update(dlt);
-	redraw();
-    t = t1;
+    ++frames;
+    delta_time = end_time-start_time;
+    double dt = delta_time.count();
+    all_time += dt;
+    mainWindow->Update(dt);
+    redraw();
+    start_time = end_time;
   }
-  cout << "FPS: " << N/tmm << endl;
+  cout << "FPS: " << frames/all_time << endl;
+  cout << "time: " << all_time << " sec"<< endl;
   delete mainWindow;
   glXMakeCurrent(dpy, win, 0);
   glXDestroyContext(dpy, glxc);

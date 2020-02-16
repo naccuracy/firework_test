@@ -1,5 +1,5 @@
-Level=2
+Level=3
 Count=20
-Velocity=150
-LifeTime=5
-Acceleration=28
+Velocity=300
+LifeTime=2
+Acceleration=30

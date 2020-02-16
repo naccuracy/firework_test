@@ -28,31 +28,31 @@ mTexture::mTexture(std::string mname)
 ,angle(0.f)
 ,alpha(1.f)
 {
-	cout<< "ctor mTextures: "<< mname << endl;
+    cout<< "ctor mTextures: "<< mname << endl;
 }
 
 mTexture::~mTexture(){
-	FreeGLTexture();
-	id = 0;
+    FreeGLTexture();
+    id = 0;
 }
 
 void mTexture::FreeGLTexture(){
-	if(glIsTexture(id)){
-		glDeleteTextures(1, &id);	
-		cout << "glDeleteTextures "<<name<<" id#" << id << endl;
-	}else{
-		cout << "error " << id << " is not valid!"<< endl;
-	}
+    if(glIsTexture(id)){
+        glDeleteTextures(1, &id);    
+        cout << "glDeleteTextures "<<name<<" id#" << id << endl;
+    }else{
+        cout << "error " << id << " is not valid!"<< endl;
+    }
 }
 
 bool mTexture::isValid()
 {
-	return glIsTexture(id);
+    return glIsTexture(id);
 }
 
 void mTexture::Load(std::string file){
-	png_byte header[8];
-	cout << "Loading..."<< file << endl;
+    png_byte header[8];
+    cout << "Loading..."<< file << endl;
     ifstream fp(file.c_str(), ifstream::binary);
     if (fp.is_open() == false)
     {
@@ -134,7 +134,7 @@ void mTexture::Load(std::string file){
 
     // glTexImage2d requires rows to be 4-byte aligned
     rowbytes += 3 - ((rowbytes-1) % 4);
-	
+    
     // Allocate the image_data as a big block, to be given to opengl
     png_byte * image_data;
     image_data = new png_byte[rowbytes * temp_height * sizeof(png_byte)];
@@ -166,8 +166,8 @@ void mTexture::Load(std::string file){
 
     // read the png into image_data through row_pointers
     png_read_image(png_ptr, row_pointers);
-	
-	
+    
+    
     // Generate the OpenGL texture object
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     glGenTextures(1, &id);
@@ -175,57 +175,57 @@ void mTexture::Load(std::string file){
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, temp_width, temp_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
-	cout << "Loaded tex# "<<id<<endl;
-	cout << "Width "<<width<<endl;
-	cout << "Height "<<height<<endl;
+    cout << "Loaded tex# "<<id<<endl;
+    cout << "Width "<<width<<endl;
+    cout << "Height "<<height<<endl;
     // clean up
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     delete image_data;
     delete row_pointers;
     fp.close();
-    return;	
+    return;    
 }
 
 void mTexture::Draw(int x, int y){
-	if(!glIsTexture(id)){
-		return;
-	}
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(x, y, 0);
-	glRotatef(angle, 0, 0, 1);
-	glScalef(scale,scale,scale);
-	glBindTexture(GL_TEXTURE_2D, id);
-	glBegin(GL_TRIANGLES);
-	glColor4f(1.0, 1.0, 1.0, alpha);
-	glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
-	glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
-	glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
-	glTexCoord2f(1.0, 1.0); glVertex2f(width, height);
-	glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
-	glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
-	glEnd();
-	glFlush();
-	glPopMatrix();
-	//cout << "draw # "<<id<<endl;
+    if(!glIsTexture(id)){
+        return;
+    }
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glRotatef(angle, 0, 0, 1);
+    glScalef(scale,scale,scale);
+    glBindTexture(GL_TEXTURE_2D, id);
+    glBegin(GL_TRIANGLES);
+    glColor4f(1.0, 1.0, 1.0, alpha);
+    glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
+    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
+    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
+    glTexCoord2f(1.0, 1.0); glVertex2f(width, height);
+    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
+    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
+    glEnd();
+    glFlush();
+    glPopMatrix();
+    //cout << "draw # "<<id<<endl;
 }
 
 mTexture::mTexture(const mTexture& mTex)//имя OpenGL текстуры не копируется
 {
-	*this = mTex;
+    *this = mTex;
 }
 
 mTexture& mTexture::operator=(const mTexture& mTex){
-	if(id==mTex.id)
-	{
-		return *this;
-	}
-	name = mTex.name;
-	id = mTex.id;
-	width = mTex.width;
-	height = mTex.height;
-	scale = mTex.scale;
-	angle = mTex.angle;
-	alpha = mTex.alpha;
-	return *this;
+    if(id==mTex.id)
+    {
+        return *this;
+    }
+    name = mTex.name;
+    id = mTex.id;
+    width = mTex.width;
+    height = mTex.height;
+    scale = mTex.scale;
+    angle = mTex.angle;
+    alpha = mTex.alpha;
+    return *this;
 }
