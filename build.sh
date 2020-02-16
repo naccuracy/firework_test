@@ -34,20 +34,44 @@ pushd $LIBSBUILD
 }
 
 [ -d $LIBZLIB ] && {
-    mkdir -v ${LIBZLIB}_build
-    cmake -S ${LIBZLIB} -B ${LIBZLIB}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1
-    cmake --build ${LIBZLIB}_build --config Release --target install
-    rm ../../libs/lib/*so*
+    [ -f ../../libs/lib/libz.a ] || {
+        [ -d ${LIBZLIB}_build ] || { 
+            mkdir -v ${LIBZLIB}_build
+        }
+        cmake -S ${LIBZLIB} -B ${LIBZLIB}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1
+        cmake --build ${LIBZLIB}_build --config Release --target install
+        rm ../../libs/lib/*so*
+    }
 }
 [ -d $LIBPNG ] && {
-    mkdir -v ${LIBPNG}_build
-    cmake -S ${LIBPNG} -B ${LIBPNG}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1 -DSKIP_INSTALL_PROGRAMS=1 -DPNG_SHARED=0 -DPNG_TESTS=0 -DPNG_BUILD_ZLIB=1 -DZLIB_INCLUDE_DIR="../../libs/include" -DZLIB_LIBRARY="../../libs/lib/libz.a"
-    cmake --build ${LIBPNG}_build --config Release --target install
+    [ -f ../../libs/lib/libpng16.a ] || {
+        [ -d ${LIBPNG}_build ] || { 
+            mkdir -v ${LIBPNG}_build
+        }
+        cmake -S ${LIBPNG} -B ${LIBPNG}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1 -DSKIP_INSTALL_PROGRAMS=1 -DPNG_SHARED=0 -DPNG_TESTS=0 -DPNG_BUILD_ZLIB=1 -DZLIB_INCLUDE_DIR="../../libs/include" -DZLIB_LIBRARY="../../libs/lib/libz.a"
+        cmake --build ${LIBPNG}_build --config Release --target install
+        rm -rf ../../libs/lib/libpng
+        rm -rf ../../libs/bin
+        rm -rf ../../libs/include/libpng16
+        rm ../../libs/lib/libpng.a
+    }
 }
 
 popd
 
-SRC="mTexture.cpp main.cpp firework.cpp fpoint.cpp mWidget.cpp"
-#g++ -std=c++0x -I $LIBS/libpng -I $LIBS/zlib -pthread -Wall -g $SRC -lpthread -lGL -lGLU -lX11 $LIBS/libpng/libpng16.a $LIBS/zlib/libz.a -o 1;
+PROJBUILD="$DEST/project"
+[ -d ${PROJBUILD} ] || { 
+    mkdir -pv ${PROJBUILD}
+}
+
+[ -f "${PROJBUILD}/firework" ] || {
+    cmake -S ./ -B ${PROJBUILD}
+    cmake --build ${PROJBUILD} --config Release
+}
+
+[ -f "${PROJBUILD}/firework" ] && {
+    cp -v ${PROJBUILD}/firework ./firework
+}
+
 echo "Done!";
 exit 0;
