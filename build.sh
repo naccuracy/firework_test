@@ -17,6 +17,7 @@ DEST="./build"
 
 LIBPNG="libpng-1.6.37"
 LIBZLIB="zlib-1.2.11"
+LIBGLFW="glfw-3.3.2"
 LIBSBUILD="$DEST/libs"
 [ -d $LIBSBUILD ] || { 
     mkdir -pv $LIBSBUILD
@@ -31,6 +32,11 @@ pushd $LIBSBUILD
 [ -f $LIBZLIB$TGZ ] || {
     curl -O http://www.zlib.net/$LIBZLIB$TGZ
     tar -xzf $LIBZLIB$TGZ
+}
+[ -f $LIBGLFW$TGZ ] || {
+    curl -O https://codeload.github.com/glfw/glfw/tar.gz/3.3.2
+    mv "3.3.2" $LIBGLFW$TGZ
+    tar -xzf $LIBGLFW$TGZ
 }
 
 [ -d $LIBZLIB ] && {
