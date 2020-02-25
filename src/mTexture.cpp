@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+#include <GLFW/glfw3.h>
 
 #include "png.h"
 #include "mTexture.h"
