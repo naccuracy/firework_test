@@ -5,8 +5,9 @@
 
 using namespace std;
 
-mWidget::mWidget(const string& name)
+mWidget::mWidget(const string& name, const string& p)
     : mname(name)
+    , prefix(p)
     , width(100)
     , height(100)
     , mx(0)
@@ -40,7 +41,7 @@ mWidget::~mWidget()
 }
 void mWidget::Input()
 {
-    ifstream fs("rc/input.txt");
+    ifstream fs(prefix+"rc/input.txt");
     string str, name, value;
 
     fs >> str;
@@ -97,7 +98,7 @@ void mWidget::Input()
 
 void mWidget::Init()
 {
-    string dir = "rc/textures/";
+    string dir = prefix+"rc/textures/";
     Input();
     fon = new mTexture("fon");
     textures.push_back(fon);
@@ -119,6 +120,11 @@ void mWidget::Init()
     
     cx = width/2.0;
     cy = height/3.0*2.0;
+}
+
+void mWidget::setPrefix(string p) {
+    prefix = p;
+    cout << "prefix: " << prefix;
 }
 
 void mWidget::Draw() 

@@ -14,7 +14,7 @@
 class mWidget
 {
 public:
-    mWidget(const std::string& name);
+    mWidget(const std::string& name, const std::string& p);
     ~mWidget();
     void Draw();
     void Update(float dt);
@@ -24,9 +24,11 @@ public:
 
     void Init();
     void Input();//чтение настроек
+    void setPrefix(std::string p);
     
     //Widget info
     std::string mname;
+    std::string prefix;
     int width;
     int height;
     int mx, my;//mouse_pos

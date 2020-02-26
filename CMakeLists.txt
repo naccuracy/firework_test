@@ -26,9 +26,8 @@ elseif (APPLE)
     set(ICON firework.icns)
 endif()
 
-set(FW_RESOURCES rc/input.txt
-		 rc/${ICON}
-)
+set(FW_ICON rc/${ICON})
+set(FW_RESOURCES rc/input.txt)
 
 set(FW_TEXTURES  rc/textures/cursor.png
                  rc/textures/dot.png
@@ -56,6 +55,7 @@ set(LIBRARIES -lpthread
               -lm
 	      libpng16.${LIBSUFFIX}
               libz.${LIBSUFFIX} 
+	      ${OPENGL_LIBRARIES}
 	      libglfw3.${LIBSUFFIX}
 )
 set(LIBS_HEADERS "./libs/include")
@@ -63,31 +63,35 @@ set(LIBS_HEADERS "./libs/include")
 if(LINUX)
     set(LIBRARIES -ldl
                   -lX11
-		  ${OpenGL_LIBRARIES}
+		  ${OPENGL_LIBRARIES}
 		  ${LIBRARIES}
 )
 endif(LINUX)
 
 if(APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -framework OpenGL -framework IOKit")
+    add_compile_definitions(FILES_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 endif(APPLE)
 
 message(STATUS "LIBRARIES ${LIBRARIES}")
 
 include_directories(${LIBS_HEADERS})
 link_directories(${LIBS})
-add_executable(firework WIN32 MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${FW_RESOURCES} ${FW_TEXTURES})
+add_executable(firework WIN32 MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${FW_ICON} ${FW_RESOURCES} ${FW_TEXTURES})
 target_link_libraries(firework ${LIBRARIES})
 
 if (APPLE)
     set_target_properties(firework PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Firework")
 
+    set_source_files_properties(${FW_ICON}
+                                PROPERTIES
+				MACOSX_PACKAGE_LOCATION "Resources")
     set_source_files_properties(${FW_RESOURCES}
                                 PROPERTIES
-				MACOSX_PACKAGE_LOCATION "rc")
+				MACOSX_PACKAGE_LOCATION "Resources/rc")
     set_source_files_properties(${FW_TEXTURES}
                                 PROPERTIES
-				MACOSX_PACKAGE_LOCATION "rc/textures")
+				MACOSX_PACKAGE_LOCATION "Resources/rc/textures")
     set_target_properties(firework PROPERTIES
                           MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
                           MACOSX_BUNDLE_LONG_VERSION_STRING "1.0.0"

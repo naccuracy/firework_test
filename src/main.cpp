@@ -150,10 +150,6 @@ int main(int argc, char **argv)
     GLFWwindow* window=nullptr;
     int width=1024;
     int height=768;
-    //create widget
-    mainWindow = new mWidget("firework");
-    mainWindow->width = 1024;
-    mainWindow->height = 768;
     if( !glfwInit() )
     {
         fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -163,7 +159,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
     glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
-    window = glfwCreateWindow( width, height, "Gears", NULL, NULL );
+    window = glfwCreateWindow( width, height, "firework", NULL, NULL );
     if (!window)
     {
         fprintf( stderr, "Failed to open GLFW window\n" );
@@ -187,6 +183,14 @@ int main(int argc, char **argv)
     // Parse command-line options
     init();
 
+    //create widget
+    string prefix="";
+#ifdef FILES_PREFIX
+    prefix = FILES_PREFIX;
+#endif
+    mainWindow = new mWidget("firework", prefix + "/");
+    mainWindow->width = 1024;
+    mainWindow->height = 768;
     auto start_time = chrono::system_clock::now();
     auto end_time = chrono::system_clock::now();
     // Main loop
