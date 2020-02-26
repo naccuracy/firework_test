@@ -18,6 +18,7 @@ set(HEADER_FILES
 
 if (UNIX AND NOT APPLE)
     set(LINUX TRUE)
+    cmake_policy(SET CMP0072 NEW)
 endif()
 
 if (WIN32)
@@ -51,8 +52,7 @@ endif()
 find_package(OpenGL REQUIRED)
 
 set(LIBS "./libs/lib")
-set(LIBRARIES -lpthread
-              -lm
+set(LIBRARIES -lm
 	      libpng16.${LIBSUFFIX}
               libz.${LIBSUFFIX} 
 	      ${OPENGL_LIBRARIES}
@@ -61,17 +61,16 @@ set(LIBRARIES -lpthread
 set(LIBS_HEADERS "./libs/include")
 
 if(LINUX)
-    set(LIBRARIES -ldl
-                  -lX11
-		  ${OPENGL_LIBRARIES}
-		  ${LIBRARIES}
-)
+    set(LIBRARIES  ${LIBRARIES} -lrt -ldl -lX11 -lpthread)
 endif(LINUX)
 
 if(APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -framework OpenGL -framework IOKit")
-    add_compile_definitions(FILES_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 endif(APPLE)
+
+set(LIBRARIES  ${LIBRARIES} -lpthread)
+
+add_compile_definitions(FILES_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 
 message(STATUS "LIBRARIES ${LIBRARIES}")
 
