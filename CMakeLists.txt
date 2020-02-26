@@ -16,11 +16,24 @@ set(HEADER_FILES
         src/mWidget.h
 )
 
-if (WIN32)
-    set(ICON rc/firework.rc)
-elseif (APPLE)
-    set(ICON rc/firework.icns)
+if (UNIX AND NOT APPLE)
+    set(LINUX TRUE)
 endif()
+
+if (WIN32)
+    set(ICON firework.rc)
+elseif (APPLE)
+    set(ICON firework.icns)
+endif()
+
+set(FW_RESOURCES rc/input.txt
+		 rc/${ICON}
+)
+
+set(FW_TEXTURES  rc/textures/cursor.png
+                 rc/textures/dot.png
+                 rc/textures/fon.png
+)
 
 set(LIBSUFFIX "a")
 
@@ -42,29 +55,42 @@ set(LIBS "./libs/lib")
 set(LIBRARIES -lpthread
               -lm
 	      libpng16.${LIBSUFFIX}
-              libz.${LIBSUFFIX}
-	      OpenGL::GL
+              libz.${LIBSUFFIX} 
 	      libglfw3.${LIBSUFFIX}
 )
 set(LIBS_HEADERS "./libs/include")
+
+if(LINUX)
+    set(LIBRARIES -ldl
+                  -lX11
+		  ${OpenGL_LIBRARIES}
+		  ${LIBRARIES}
+)
+endif(LINUX)
 
 if(APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -framework OpenGL -framework IOKit")
 endif(APPLE)
 
+message(STATUS "LIBRARIES ${LIBRARIES}")
+
 include_directories(${LIBS_HEADERS})
 link_directories(${LIBS})
-add_executable(firework WIN32 MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(firework WIN32 MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${FW_RESOURCES} ${FW_TEXTURES})
 target_link_libraries(firework ${LIBRARIES})
 
 if (APPLE)
-	set_target_properties(firework PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Firework")
+    set_target_properties(firework PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Firework")
 
-    set_source_files_properties(rc/firework.icns PROPERTIES
-                                MACOSX_PACKAGE_LOCATION "Resources")
+    set_source_files_properties(${FW_RESOURCES}
+                                PROPERTIES
+				MACOSX_PACKAGE_LOCATION "rc")
+    set_source_files_properties(${FW_TEXTURES}
+                                PROPERTIES
+				MACOSX_PACKAGE_LOCATION "rc/textures")
     set_target_properties(firework PROPERTIES
-                          MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+                          MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
                           MACOSX_BUNDLE_LONG_VERSION_STRING "1.0.0"
-                          MACOSX_BUNDLE_ICON_FILE rc/firework.icns
-                          MACOSX_BUNDLE_INFO_PLIST "src/MacOSXBundleInfo.plist.in")
+			  MACOSX_BUNDLE_ICON_FILE ${ICON} 
+			  MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/MacOSXBundleInfo.plist.in")
 endif()

@@ -101,13 +101,12 @@ pushd $LIBSBUILD
     }
 }
 [ -d $LIBGLFW ] && {
-    [ -f ../../libs/lib/glfw.${ASUFFIX} ] || {
+    [ -f ../../libs/lib/libglfw3.${ASUFFIX} ] || {
         [ -d ${LIBGLFW}_build ] || { 
             mkdir -v ${LIBGLFW}_build
         }
         cmake -S ${LIBGLFW} -B ${LIBGLFW}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF
-        cmake --build ${LIBGLFW}_build --config Release --target install
-        rm ../../libs/lib/*${SOSUFFIX}*
+        cmake --build ${LIBGLFW}_build --config Release --target install 
     }
 }
 popd
