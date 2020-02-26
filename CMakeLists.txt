@@ -61,7 +61,7 @@ set(LIBRARIES -lm
 set(LIBS_HEADERS "./libs/include")
 
 if(LINUX)
-    set(LIBRARIES  ${LIBRARIES} -lrt -ldl -lX11 -lpthread)
+    set(LIBRARIES  ${LIBRARIES} -lrt -ldl -lX11)
 endif(LINUX)
 
 if(APPLE)
