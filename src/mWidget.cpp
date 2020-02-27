@@ -130,8 +130,10 @@ void mWidget::setPrefix(string p) {
 void mWidget::Draw() 
 {
     fon->angle = 0;
+    fon->bind();
     fon->Draw(0, 0);
     cursor->angle = angle - 45.f ;
+    cursor->bind();
     cursor->Draw(mx - cursor->width/2, my - cursor->height/2);
     man.Draw();
 }

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include <GLFW/glfw3.h>
 #define USE_MATH_DEFINES
 
 using namespace std;
@@ -191,9 +192,14 @@ int Firework::Update(float dt)
 }
 
 void Firework::Draw(){
+    if(fireballs.empty()){ 
+	    return;
+    }
+    fireballs[0].texPtr->bind();
     for(auto& it: fireballs){
         it.Draw();
-    }    
+    }
+    glFlush();
 }
 //реализация унарного предиката для удаления взорвавшихся снарядов
 bool isExploded(Fireball const& fbl)

@@ -13,6 +13,7 @@ class mTexture{
     
     std::string name;
     unsigned int id;
+    unsigned int render_list;
     int width;
     int height;
     float scale;
@@ -21,5 +22,7 @@ class mTexture{
     void Draw(int x, int y);
     void FreeGLTexture();
     bool isValid();
+    void createRenderList();
+    void bind();
 };
 #endif

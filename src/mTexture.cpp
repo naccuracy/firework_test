@@ -183,7 +183,31 @@ void mTexture::Load(std::string file){
     delete image_data;
     delete row_pointers;
     fp.close();
+    createRenderList();
     return;    
+}
+
+void mTexture::createRenderList(){
+    render_list = glGenLists(1);
+    glNewList(render_list, GL_COMPILE);
+    glBegin(GL_TRIANGLES);
+    glColor4f(1.0, 1.0, 1.0, alpha);
+    glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
+    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
+    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
+    glTexCoord2f(1.0, 1.0); glVertex2f(width, height);
+    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
+    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
+    glEnd();
+    glEndList();
+}
+
+void mTexture::bind(){
+    if(!glIsTexture(id)){
+        return;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, id);
 }
 
 void mTexture::Draw(int x, int y){
@@ -195,17 +219,7 @@ void mTexture::Draw(int x, int y){
     glTranslatef(x, y, 0);
     glRotatef(angle, 0, 0, 1);
     glScalef(scale,scale,scale);
-    glBindTexture(GL_TEXTURE_2D, id);
-    glBegin(GL_TRIANGLES);
-    glColor4f(1.0, 1.0, 1.0, alpha);
-    glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
-    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
-    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
-    glTexCoord2f(1.0, 1.0); glVertex2f(width, height);
-    glTexCoord2f(1.0, 0.0); glVertex2f(width, 0);
-    glTexCoord2f(0.0, 1.0); glVertex2f(0, height);
-    glEnd();
-    glFlush();
+    glCallList(render_list);
     glPopMatrix();
     //cout << "draw # "<<id<<endl;
 }
@@ -221,6 +235,7 @@ mTexture& mTexture::operator=(const mTexture& mTex){
     }
     name = mTex.name;
     id = mTex.id;
+    render_list = mTex.render_list;
     width = mTex.width;
     height = mTex.height;
     scale = mTex.scale;
