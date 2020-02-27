@@ -1,19 +1,7 @@
-/* A simple program to show how to set up an X window for OpenGL rendering.
- g++ -I ../../../libs/libpng/ -I ../../../libs/zlib -L ../../../libs/libpng/ -L ../../../libs/zlib/ -pthread -Wall -g main_png.cpp -lpthread -lGL -lGLU -lX11 -lz ../../../libs/libpng/libpng16.a -o 1
- */
- 
- //TRY XCheckWindowEvent
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <chrono>
-
-//#include <GL/glx.h>    /* this includes the necessary X headers */
-//#include <GL/gl.h>
-//#include <GL/glu.h>
-
-//#include <X11/X.h>    /* X11 constant (e.g. TrueColor) */
-//#include <X11/keysym.h>
 
 #include <GLFW/glfw3.h>
 
@@ -23,7 +11,6 @@ using namespace std;
 int frames = 0;
 double all_time = 0;
 chrono::duration<double> delta_time;
-//static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
 mWidget *mainWindow = nullptr;
 
@@ -75,14 +62,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
     if (action == GLFW_PRESS)
     {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	double cursorX=0;
 	double cursorY=0;
         glfwGetCursorPos(window, &cursorX, &cursorY);
         mainWindow->MouseDown(cursorX, cursorY);
     }
-    else
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 
@@ -166,7 +150,7 @@ int main(int argc, char **argv)
         glfwTerminate();
         exit( EXIT_FAILURE );
     }
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     // Set callback functions
     glfwSetFramebufferSizeCallback(window, reshape);
     glfwSetKeyCallback(window, key_callback);
