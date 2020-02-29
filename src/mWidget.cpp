@@ -1,5 +1,10 @@
 #include "mWidget.h"
-
+#if defined(WINDOWS_PLATFORM)
+    #define _USE_MATH_DEFINES
+    #include <math.h>
+#else
+    #include <cmath>
+#endif
 #include <sstream>
 #include <cmath>
 

@@ -25,9 +25,10 @@ function get_cpu_cores_count(){
     fi
     echo ${cores}
 }
+ROOT_DIR=$(pwd)
 ############################
-LIBS="./libs"
-DEST="./build"
+LIBS="${ROOT_DIR}/libs"
+DEST="${ROOT_DIR}/build"
 
 [ -d $LIBS ] || {
     mkdir -pv $LIBS
@@ -78,34 +79,34 @@ pushd $LIBSBUILD
 }
 
 [ -d $LIBZLIB ] && {
-    [ -f ../../libs/lib/libz.${ASUFFIX} ] || {
+    [ -f ${LIBS}/lib/libz.${ASUFFIX} ] || {
         [ -d ${LIBZLIB}_build ] || { 
             mkdir -v ${LIBZLIB}_build
         }
-        cmake -S ${LIBZLIB} -B ${LIBZLIB}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1
+        cmake -G "Unix Makefiles" -S ${LIBZLIB} -B ${LIBZLIB}_build -DCMAKE_INSTALL_PREFIX="${LIBS}" -DSKIP_INSTALL_FILES=1
         cmake --build ${LIBZLIB}_build --config Release --target install
-        rm ../../libs/lib/*${SOSUFFIX}*
+        rm ${LIBS}/lib/*${SOSUFFIX}*
     }
 }
 [ -d $LIBPNG ] && {
-    [ -f ../../libs/lib/libpng16.${ASUFFIX} ] || {
+    [ -f ${LIBS}/lib/libpng16.${ASUFFIX} ] || {
         [ -d ${LIBPNG}_build ] || { 
             mkdir -v ${LIBPNG}_build
         }
-        cmake -S ${LIBPNG} -B ${LIBPNG}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DSKIP_INSTALL_FILES=1 -DSKIP_INSTALL_PROGRAMS=1 -DPNG_SHARED=0 -DPNG_TESTS=0 -DPNG_BUILD_ZLIB=1 -DZLIB_INCLUDE_DIR="../../libs/include" -DZLIB_LIBRARY="../../libs/lib/libz.${ASUFFIX}"
+        cmake -G "Unix Makefiles" -S ${LIBPNG} -B ${LIBPNG}_build -DCMAKE_INSTALL_PREFIX="${LIBS}" -DSKIP_INSTALL_FILES=1 -DSKIP_INSTALL_PROGRAMS=1 -DPNG_SHARED=0 -DPNG_TESTS=0 -DPNG_BUILD_ZLIB=1 -DZLIB_INCLUDE_DIR="${LIBS}/include" -DZLIB_LIBRARY="${LIBS}/lib/libz.${ASUFFIX}"
         cmake --build ${LIBPNG}_build --config Release --target install
-        rm -rf ../../libs/lib/libpng
-        rm -rf ../../libs/bin
-        rm -rf ../../libs/include/libpng16
-        rm ../../libs/lib/libpng.${ASUFFIX}
+        rm -rf ${LIBS}/lib/libpng
+        rm -rf ${LIBS}/bin
+        rm -rf ${LIBS}/include/libpng16
+        rm ${LIBS}/lib/libpng.${ASUFFIX}
     }
 }
 [ -d $LIBGLFW ] && {
-    [ -f ../../libs/lib/libglfw3.${ASUFFIX} ] || {
+    [ -f ${LIBS}/lib/libglfw3.${ASUFFIX} ] || {
         [ -d ${LIBGLFW}_build ] || { 
             mkdir -v ${LIBGLFW}_build
         }
-        cmake -S ${LIBGLFW} -B ${LIBGLFW}_build -DCMAKE_INSTALL_PREFIX="../../libs" -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF
+        cmake -G "Unix Makefiles" -S ${LIBGLFW} -B ${LIBGLFW}_build -DCMAKE_INSTALL_PREFIX="${LIBS}" -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF
         cmake --build ${LIBGLFW}_build --config Release --target install 
     }
 }
@@ -117,7 +118,7 @@ PROJBUILD="$DEST/project"
 }
 
 [ -f "${PROJBUILD}/firework" ] || {
-    cmake -S ./ -B ${PROJBUILD}
+    cmake -G "Unix Makefiles" -S ./ -B ${PROJBUILD}
     cmake --build ${PROJBUILD} --config Release
 }
 

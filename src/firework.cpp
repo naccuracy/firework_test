@@ -1,9 +1,13 @@
 #include "firework.h"
 #include <algorithm>
-#include <cmath>
+#if defined(WINDOWS_PLATFORM)
+    #define _USE_MATH_DEFINES
+    #include <math.h>
+#else
+    #include <cmath>
+#endif
 #include <random>
 #include <GLFW/glfw3.h>
-#define USE_MATH_DEFINES
 
 using namespace std;
 

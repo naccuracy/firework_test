@@ -51,12 +51,19 @@ endif()
 #g++ -std=c++0x -I $LIBS/libpng -I $LIBS/zlib -pthread -Wall -g $SRC -lpthread -lGL -lGLU -lX11 $LIBS/libpng/libpng16.a $LIBS/zlib/libz.a -o 1;
 find_package(OpenGL REQUIRED)
 
+if(MINGW OR MSVC)
+    add_compile_definitions(WINDOWS_PLATFORM)
+    set(ZLIB_NAME libzlibstatic)
+else()
+    set(ZLIB_NAME libz)
+endif()
+
 set(LIBS "./libs/lib")
 set(LIBRARIES -lm
-	      libpng16.${LIBSUFFIX}
-              libz.${LIBSUFFIX} 
-	      ${OPENGL_LIBRARIES}
-	      libglfw3.${LIBSUFFIX}
+            libpng16.${LIBSUFFIX}
+            ${ZLIB_NAME}.${LIBSUFFIX} 
+	        ${OPENGL_LIBRARIES}
+	        libglfw3.${LIBSUFFIX}
 )
 set(LIBS_HEADERS "./libs/include")
 
