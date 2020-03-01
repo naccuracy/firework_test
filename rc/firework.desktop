@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=firework
+GenericName=firework
+Comment=glfw firework
+Exec=/512Gb/code/firework_test/build/project/firework %f
+Icon=/512Gb/code/firework_test/rc/firework.ico
+Terminal=false
+Type=Application
+Categories=Game
+
