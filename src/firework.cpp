@@ -58,7 +58,7 @@ Fireball::Fireball(FPoint pos0, FPoint _v0, float accel, float lTime, int lev, m
 Fireball::Fireball(const Fireball &f)
 :v0{f.v0}
 ,v{f.v}
-,p0{pos}
+,p0{f.pos}
 ,pos{f.pos}
 ,lifeTime{f.lifeTime}
 ,texPtr{f.texPtr}

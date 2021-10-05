@@ -181,7 +181,7 @@ void mTexture::Load(std::string file){
     // clean up
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     delete image_data;
-    delete row_pointers;
+    delete[] row_pointers;
     fp.close();
     createRenderList();
     return;    

@@ -188,17 +188,17 @@ int main(int argc, char **argv)
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
-	++frames;
+        ++frames;
         all_time += dt;
         start_time = end_time;
     }
 
+    delete mainWindow;
     // Terminate GLFW
     glfwTerminate();
 
     cout << "FPS: " << frames/all_time << endl;
     cout << "time: " << all_time << " sec"<< endl;
-    delete mainWindow;
     // Exit program
     exit( EXIT_SUCCESS );
 }
